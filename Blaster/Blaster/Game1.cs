@@ -1,19 +1,28 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Autofac;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Blaster
 {
-    public class Game1 : Game
+    public abstract class GameBase : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        protected GraphicsDeviceManager GraphicsDeviceManager { get; }
+        public int Width { get; }
+        public int Height { get; }
 
-        public Game1()
+        public GameBase(int width = 800, int height = 480)
         {
-            _graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Width = width;
+            Height = height;
+            GraphicsDeviceManager = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = width,
+                PreferredBackBufferHeight = height
+            };
             IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+            Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
@@ -21,24 +30,6 @@ namespace Blaster
             base.Initialize();
         }
 
-        protected override void LoadContent()
-        {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            base.Draw(gameTime);
-        }
+        protected abstract void RegisterDependencies(ContainerBuilder builder);
     }
 }
