@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blaster", "Blaster\Blaster.csproj", "{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blaster", "Blaster\Blaster.csproj", "{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlasterServer", "BlasterServer\BlasterServer.csproj", "{6890CC0C-C180-4297-BC5F-2169B5154B57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleUDP", "SimpleUDP\SimpleUDP.csproj", "{B2DCD5A6-04BD-489A-9B15-4C30810921B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6890CC0C-C180-4297-BC5F-2169B5154B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6890CC0C-C180-4297-BC5F-2169B5154B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6890CC0C-C180-4297-BC5F-2169B5154B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6890CC0C-C180-4297-BC5F-2169B5154B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2DCD5A6-04BD-489A-9B15-4C30810921B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2DCD5A6-04BD-489A-9B15-4C30810921B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2DCD5A6-04BD-489A-9B15-4C30810921B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2DCD5A6-04BD-489A-9B15-4C30810921B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
