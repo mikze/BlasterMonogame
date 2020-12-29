@@ -29,7 +29,5 @@ namespace Blaster
         {
             base.Initialize();
         }
-
-        protected abstract void RegisterDependencies(ContainerBuilder builder);
     }
 }

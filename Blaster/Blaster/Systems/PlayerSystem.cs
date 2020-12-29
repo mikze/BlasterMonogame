@@ -4,9 +4,11 @@ using MonoGame.Extended;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Entities.Systems;
 using MonoGame.Extended.Sprites;
+using MonoGame.Extended.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework.Input;
 
 namespace Blaster.Systems
 {
@@ -30,7 +32,12 @@ namespace Blaster.Systems
 
         public override void Process(GameTime gameTime, int entityId)
         {
-            
+            var keyboardState = KeyboardExtended.GetState();
+
+            if (keyboardState.WasKeyJustUp(Keys.Up))
+            {
+
+            }
         }
     }
 }
