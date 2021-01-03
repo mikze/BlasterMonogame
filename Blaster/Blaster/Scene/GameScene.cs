@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Entities;
+using MonoGame.Extended.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,36 +14,35 @@ namespace Blaster.Scene
 {
     internal class GameScene : Scene
     {
-        private World world;
-        private OrthographicCamera camera;
-        private EntityFactory entityFactory;
-
+        World world;
         public GameScene() : base() 
         {
         }
 
         public override void LoadContent()
         {
-            camera = new OrthographicCamera(_sceneHandler._graphicsDevice);
+            var camera = new OrthographicCamera(_sceneHandler._graphicsDevice);
             world = new WorldBuilder()
                 .AddSystem(new RenderSystem(new SpriteBatch(_sceneHandler._graphicsDevice), camera))
                 .Build();
 
             _sceneHandler._gameComponents.Add(world);
 
-            entityFactory = new EntityFactory(world, _sceneHandler._content);
+            var entityFactory = new EntityFactory(world, _sceneHandler._content);
 
             entityFactory.CreatePlayer(new Vector2(100, 240));
+            entityFactory.CreateText(new Vector2(200, 340), "Elo");
         }
 
-        internal override void DrawGameScene()
+        internal override void DrawScene()
         {
-            LoadContent();
-        }
+            var keyboardState = KeyboardExtended.GetState();
 
-        internal override void DrawMenuScene()
-        {
-            
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                world.Dispose();
+                _sceneHandler.ChangeScene(new MenuScene());
+            }
         }
     }
 }

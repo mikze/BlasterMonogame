@@ -27,10 +27,11 @@ namespace Blaster.Scene
         {
             _scene = scene;
             _scene.SetSceneHandler(this);
+            LoadScene();
         }
 
-        public void DrawMenuScene() => _scene.DrawMenuScene();
+        public void DrawScene() => _scene.DrawScene();
 
-        public void DrawGameScene() => _scene.DrawGameScene();
+        public void LoadScene() => _scene.LoadContent();
     }
 }

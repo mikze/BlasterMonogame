@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Blaster.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Entities.Systems;
 using MonoGame.Extended.Sprites;
@@ -17,9 +19,10 @@ namespace Blaster.Systems
         private ComponentMapper<AnimatedSprite> _animatedSpriteMapper;
         private ComponentMapper<Sprite> _spriteMapper;
         private ComponentMapper<Transform2> _transforMapper;
+        private ComponentMapper<Text> _textMapper;
 
         public RenderSystem(SpriteBatch spriteBatch, OrthographicCamera camera) 
-            : base(Aspect.All(typeof(Transform2)).One(typeof(AnimatedSprite), typeof(Sprite)))
+            : base(Aspect.All(typeof(Transform2)).One(typeof(AnimatedSprite), typeof(Sprite), typeof(Text)))
         {
             _spriteBatch = spriteBatch;
             _camera = camera;
@@ -31,15 +34,25 @@ namespace Blaster.Systems
 
             foreach (var entity in ActiveEntities)
             {
-                var sprite = _animatedSpriteMapper.Has(entity)
-                    ? _animatedSpriteMapper.Get(entity)
-                    : _spriteMapper.Get(entity);
-                var transform = _transforMapper.Get(entity);
+                bool isText = _textMapper.Has(entity);
 
-                if (sprite is AnimatedSprite animatedSprite)
-                    animatedSprite.Update(gameTime.GetElapsedSeconds());
+                if (!isText)
+                {
+                    var sprite = _animatedSpriteMapper.Has(entity)
+                        ? _animatedSpriteMapper.Get(entity)
+                        : _spriteMapper.Get(entity);
+                    var transform = _transforMapper.Get(entity);
 
-                _spriteBatch.Draw(sprite, transform);
+                    if (sprite is AnimatedSprite animatedSprite)
+                        animatedSprite.Update(gameTime.GetElapsedSeconds());
+
+                    _spriteBatch.Draw(sprite, transform);
+                }
+                else
+                {
+                    var text = _textMapper.Get(entity);
+                    _spriteBatch.DrawString(text.font, text.text, _transforMapper.Get(entity).Position, Color.White);
+                }
 
             }
 
@@ -51,6 +64,7 @@ namespace Blaster.Systems
             _transforMapper = mapperService.GetMapper<Transform2>();
             _animatedSpriteMapper = mapperService.GetMapper<AnimatedSprite>();
             _spriteMapper = mapperService.GetMapper<Sprite>();
+            _textMapper = mapperService.GetMapper<Text>();
         }
     }
 }

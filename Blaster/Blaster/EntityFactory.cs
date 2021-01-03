@@ -39,6 +39,17 @@ namespace Blaster
 
         }
 
+        public Entity CreateText(Vector2 position, string text)
+        {
+            var font = _contentManager.Load<SpriteFont>("Score");
+            var entity = _world.CreateEntity();
+
+            entity.Attach(new Transform2(position, 0, Vector2.One * 4));
+            entity.Attach(new Text(text,font));
+            return entity;
+
+        }
+
         private void AddAnimationCycle(SpriteSheet spriteSheet, string name, int[] frames, bool isLooping = true, float frameDuration = 0.1f)
         {
             var cycle = new SpriteSheetAnimationCycle();

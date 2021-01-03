@@ -17,13 +17,12 @@ namespace Blaster
         protected override void LoadContent()
         {
             sceneHandler = SceneHandlerFactory.CreateSceneHandler(Components, GraphicsDevice, Content);
-            sceneHandler.DrawGameScene();
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-
+            sceneHandler.DrawScene();
             base.Draw(gameTime);
         }
     }

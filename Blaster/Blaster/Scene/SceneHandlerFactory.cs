@@ -11,10 +11,10 @@ namespace Blaster.Scene
     {
         public static SceneHandler CreateSceneHandler(GameComponentCollection gameComponents, GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            var scene = new GameScene();
+            var scene = new MenuScene();
             var sceneHandler = new SceneHandler(scene, gameComponents, graphicsDevice, contentManager);
             scene.SetSceneHandler(sceneHandler);
-
+            sceneHandler.LoadScene();
             return sceneHandler;
         }
     }
