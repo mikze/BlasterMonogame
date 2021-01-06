@@ -16,5 +16,10 @@ namespace SimpleUDP.Server
         }
         public IPEndPoint EndPoint { get; set; }
         public int Id { get; }
+
+        public void ClientRemove()
+        {      
+            _id--;
+        }
     }
 }

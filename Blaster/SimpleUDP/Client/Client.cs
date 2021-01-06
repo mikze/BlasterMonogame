@@ -25,5 +25,6 @@ namespace SimpleUDP.Client
             base.Send(toSend, server);
         }
         public void Connect(IPEndPoint server) => Send(Helper.ParseObjToSend(new Ramka() { msg = "Welcome" }), server);
+        public void Disconnect(IPEndPoint server) => Send(Helper.ParseObjToSend(new Ramka() { msg = "Disconnect" }), server);
     }
 }

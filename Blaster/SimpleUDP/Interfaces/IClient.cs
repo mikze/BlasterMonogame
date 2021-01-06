@@ -9,5 +9,6 @@ namespace SimpleUDP
     {
         public IPEndPoint EndPoint { get; set; }
         public int Id { get; }
+        public void ClientRemove();
     }
 }

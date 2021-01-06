@@ -1,4 +1,6 @@
 ﻿using Blaster.Components;
+using Blaster.Network;
+using Blaster.Scene;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -9,6 +11,7 @@ using MonoGame.Extended.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Blaster.Network.NetworkHelper;
 
 namespace Blaster.Systems
 {

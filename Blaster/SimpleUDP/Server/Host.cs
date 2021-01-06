@@ -12,13 +12,20 @@ namespace SimpleUDP.Server
     {
         public List<IClient> clients = new List<IClient>();
         UdpClient Sender;
+        bool exit = false;
         public Host(int port) : base(port)
         {
             Sender = new UdpClient();
         }
+
+        public void Exit()
+        {
+            exit = true;
+            Sender.Dispose();
+        }
         public void Listen()
         {
-            while (true)
+            while (!exit)
             {
                 var endPoint = new IPEndPoint(IPAddress.Any, 0);
                 var msg = base.Listen(ref endPoint);
@@ -41,6 +48,11 @@ namespace SimpleUDP.Server
         }
         public override void Send(byte[] msg, IPEndPoint host) => Sender.Send(msg, msg.Length, host);
         public void Send(t msg, IPEndPoint endPoint) => base.Send(Helper.ParseObjToSend(msg), endPoint);
+        public void Send(t msg, int clinetId)
+        {
+            var clientEndPoint = clients.First(x => x.Id == clinetId).EndPoint;
+            Send(msg, clientEndPoint);
+        }
         public void BroadCast(t msg) => clients.ForEach( cl => base.Send(Helper.ParseObjToSend(msg), cl.EndPoint));
         private bool IsNewClient(byte[] msg, IPEndPoint endPoint)
         {
@@ -53,7 +65,17 @@ namespace SimpleUDP.Server
                     var newClient = new Client(endPoint);
                     clients.Add(newClient);
                     OnClientAdded(newClient);
-                    Console.WriteLine("New client!!");
+                    Console.WriteLine("New client!");
+                }
+
+                if (sMsg.msg == "Disconnect")
+                {
+                    var c = clients.Where(x => x.EndPoint.Equals(endPoint)).FirstOrDefault();
+                    if (c != null)
+                    {
+                        DisconnectClient(c);
+                        Console.WriteLine("Client disconnected!");
+                    }
                 }
                 else
                     throw new Exception();
@@ -65,15 +87,16 @@ namespace SimpleUDP.Server
                 return false;
             }
         }
-        public void DisconnectClient(int id)
+        public void DisconnectClient(IClient client)
         {
-            var cl = clients.FirstOrDefault(x => x.Id == id);
-            if (cl != null)
-                clients.Remove(cl);
+            clients.Remove(client);
+            client.ClientRemove();
+            OnClientDisconnected(client);
         }
             
         public delegate void RecieveHandlerDelegate(t obj, int clientId);
         public RecieveHandlerDelegate RecieveHandler { get; set; }
         public Action<IClient> OnClientAdded { get; set; } = c => { };
+        public Action<IClient> OnClientDisconnected { get; set; } = c => { };
     }
 }

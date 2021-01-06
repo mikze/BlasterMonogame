@@ -14,16 +14,20 @@ namespace Blaster
 {
     public class EntityFactory
     {
-        private readonly World _world;
-        private readonly ContentManager _contentManager;
+        private World _world;
+        private ContentManager _contentManager;
 
+        public EntityFactory()
+        { }
         public EntityFactory(World world, ContentManager contentManager)
         {
             _world = world;
             _contentManager = contentManager;
         }
 
-        public Entity CreatePlayer(Vector2 position)
+        public void SetWorldAndContentManager(World w, ContentManager c) {_world = w; _contentManager = c;}
+
+        public Entity CreatePlayer(Vector2 position, int netId)
         {
             var dudeTexture = _contentManager.Load<Texture2D>("hero");
             var dudeAtlas = TextureAtlas.Create("dudeAtlas", dudeTexture, 16, 16);
@@ -35,6 +39,7 @@ namespace Blaster
             entity.Attach(new AnimatedSprite(spriteSheet, "idle"));
             entity.Attach(new Transform2(position, 0, Vector2.One * 4));
             entity.Attach(new Player());
+            entity.Attach(new NetElement() { Id = netId });
             return entity;
 
         }

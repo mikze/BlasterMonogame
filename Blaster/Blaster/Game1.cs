@@ -1,7 +1,9 @@
 ﻿using Autofac;
+using Blaster.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Blaster
 {
@@ -25,6 +27,11 @@ namespace Blaster
             Content.RootDirectory = "Content";
         }
 
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            BlasterClient.Disconnect();
+            base.OnExiting(sender, args);
+        }
         protected override void Initialize()
         {
             base.Initialize();
