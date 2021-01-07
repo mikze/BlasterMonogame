@@ -22,7 +22,8 @@ namespace Blaster.Network
         {
             entity,
             movement,
-            newPLayer
+            newPLayer,
+            chat
         }
 
         public struct Frame

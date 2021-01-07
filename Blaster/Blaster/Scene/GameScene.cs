@@ -6,8 +6,12 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Entities;
+using MonoGame.Extended.Gui;
+using MonoGame.Extended.Gui.Controls;
 using MonoGame.Extended.Input;
+using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +25,10 @@ namespace Blaster.Scene
     {
         World world;
         EntityFactory entityFactory;
-        public GameScene() : base() 
+        GuiSystem _guiSystem;
+        TextBox chatText;
+
+        public GameScene() : base()
         {
             BlasterClient.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6666));
         }
@@ -37,29 +44,40 @@ namespace Blaster.Scene
                 .AddSystem(new NetElementSystem(entityFactory))
                 .Build();
 
-           _sceneHandler._gameComponents.Add(world);
+            _sceneHandler._gameComponents.Add(world);
 
             entityFactory.SetWorldAndContentManager(world, _sceneHandler._content);
 
             var entitiesToBuild = DownloadElementsFromServer();
 
-            foreach(var e in entitiesToBuild)
+            foreach (var e in entitiesToBuild)
             {
                 entityFactory.CreatePlayer(e.Position, e.Id);
             }
+
+            LoadGui();
         }
 
-        internal override void DrawScene()
+        internal override void DrawScene(GameTime gameTime)
         {
+            _guiSystem.Draw(gameTime);
             var keyboardState = KeyboardExtended.GetState();
-
             if (keyboardState.IsKeyDown(Keys.Space))
             {
                 world.Dispose();
                 BlasterClient.Disconnect();
                 _sceneHandler.ChangeScene(new MenuScene());
             }
+            if (keyboardState.IsKeyDown(Keys.Enter))
+            {
+                BlasterClient.Send(new Frame() { id = 1, FrameKind = (int)FrameKind.chat, body = chatText.Text });
+            }
             SendMovement(keyboardState);
+        }
+
+        internal override void UpdateScene(GameTime gameTime)
+        {
+            _guiSystem.Update(gameTime);
         }
 
         internal void SendMovement(KeyboardStateExtended keyState)
@@ -76,6 +94,33 @@ namespace Blaster.Scene
             if (keyState.IsKeyDown(Keys.Down))
                 BlasterClient.Send(new Frame() { id = 1, FrameKind = (int)FrameKind.movement, body = "down" });
         }
-     
+
+        void LoadGui()
+        {
+            var viewportAdapter = new DefaultViewportAdapter(_sceneHandler._graphicsDevice);
+            var guiRenderer = new GuiSpriteBatchRenderer(_sceneHandler._graphicsDevice, () => Matrix.Identity);
+            var font = _sceneHandler._content.Load<BitmapFont>("Sensation");
+            BitmapFont.UseKernings = false;
+            Skin.CreateDefault(font);
+            chatText = new TextBox { Text = "TextBox", Position = new Point(0, 150) };
+            var controlTest = new StackPanel
+            {
+                Items =
+                {
+                    chatText
+                }
+                ,
+                Position = new Point(0, 150),
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+
+
+            var demoScreen = new Screen
+            {
+                Content = controlTest
+            };
+
+            _guiSystem = new GuiSystem(viewportAdapter, guiRenderer) { ActiveScreen = demoScreen };
+        }
     }
 }

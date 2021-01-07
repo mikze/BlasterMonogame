@@ -7,6 +7,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Entities.Systems;
+using MonoGame.Extended.Gui.Controls;
 using MonoGame.Extended.Sprites;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace Blaster.Systems
         private ComponentMapper<Sprite> _spriteMapper;
         private ComponentMapper<Transform2> _transforMapper;
         private ComponentMapper<Text> _textMapper;
+        private ComponentMapper<TextBox> _textBoxMapper;
 
         public RenderSystem(SpriteBatch spriteBatch, OrthographicCamera camera) 
             : base(Aspect.All(typeof(Transform2)).One(typeof(AnimatedSprite), typeof(Sprite), typeof(Text)))
@@ -41,15 +43,25 @@ namespace Blaster.Systems
 
                 if (!isText)
                 {
-                    var sprite = _animatedSpriteMapper.Has(entity)
-                        ? _animatedSpriteMapper.Get(entity)
-                        : _spriteMapper.Get(entity);
-                    var transform = _transforMapper.Get(entity);
+                    bool isTextBox = _textBoxMapper.Has(entity);
 
-                    if (sprite is AnimatedSprite animatedSprite)
-                        animatedSprite.Update(gameTime.GetElapsedSeconds());
+                    if (!isTextBox)
+                    {
+                        var sprite = _animatedSpriteMapper.Has(entity)
+                            ? _animatedSpriteMapper.Get(entity)
+                            : _spriteMapper.Get(entity);
+                        var transform = _transforMapper.Get(entity);
 
-                    _spriteBatch.Draw(sprite, transform);
+                        if (sprite is AnimatedSprite animatedSprite)
+                            animatedSprite.Update(gameTime.GetElapsedSeconds());
+
+                        _spriteBatch.Draw(sprite, transform);
+                    }
+                    else
+                    {
+                        var textBox = _textBoxMapper.Get(entity);
+                        //textBox.Draw()
+                    }
                 }
                 else
                 {
@@ -68,6 +80,7 @@ namespace Blaster.Systems
             _animatedSpriteMapper = mapperService.GetMapper<AnimatedSprite>();
             _spriteMapper = mapperService.GetMapper<Sprite>();
             _textMapper = mapperService.GetMapper<Text>();
+            _textBoxMapper = mapperService.GetMapper<TextBox>();
         }
     }
 }

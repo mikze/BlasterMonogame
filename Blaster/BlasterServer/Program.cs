@@ -34,6 +34,9 @@ namespace BlasterServer
 
                 if ((FrameKind)t.FrameKind == FrameKind.movement)
                     HandleMovement(o, t);
+
+                if ((FrameKind)t.FrameKind == FrameKind.chat)
+                    HandleChat(o, t);
             };
 
             host.OnClientDisconnected += c =>
@@ -53,6 +56,11 @@ namespace BlasterServer
 
             host.Listen();
 
+        }
+
+        private static void HandleChat(int o, Frame t)
+        {
+            host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.chat, body = t.body });
         }
 
         private static void BradCastNewPlayerToOthers(Entity e)
@@ -105,7 +113,8 @@ namespace BlasterServer
         {
             entity,
             movement,
-            newPLayer
+            newPLayer,
+            chat
         }
 
         public struct Frame

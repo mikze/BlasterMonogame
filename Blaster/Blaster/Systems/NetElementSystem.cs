@@ -41,6 +41,16 @@ namespace Blaster.Systems
             var frames = BlasterClient.GetFrames(p.Id);
             HandleMovements(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.movement), entityId);
             HandleNewPlayer(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.newPLayer));
+            HandleChat(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.chat), entityId);
+        }
+
+        private void HandleChat(IEnumerable<Frame> enumerable, int entityId)
+        {
+            if (enumerable.Any())
+            {
+                var t = _transformMapper.Get(entityId);
+                _entityFactory.CreateText(new Vector2(t.Position.X, t.Position.Y + 10), enumerable.First().body);
+            }
         }
 
         private void HandleNewPlayer(IEnumerable<Frame> enumerable)

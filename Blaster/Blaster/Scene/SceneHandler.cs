@@ -30,7 +30,9 @@ namespace Blaster.Scene
             LoadScene();
         }
 
-        public void DrawScene() => _scene.DrawScene();
+        public void DrawScene(GameTime gameTime) => _scene.DrawScene(gameTime);
+
+        public void UpdateScene(GameTime gameTime) => _scene.UpdateScene(gameTime);
 
         public void LoadScene() => _scene.LoadContent();
     }

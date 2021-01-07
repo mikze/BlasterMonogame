@@ -12,9 +12,11 @@ namespace Blaster.Scene
     {
         protected SceneHandler _sceneHandler;
 
-        internal abstract void DrawScene();
+        internal abstract void DrawScene(GameTime gameTime);
 
         public void SetSceneHandler(SceneHandler sceneHandler) => _sceneHandler = sceneHandler;
         public abstract void LoadContent();
+
+        internal abstract void UpdateScene(GameTime gameTime);
     }
 }

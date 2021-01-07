@@ -29,7 +29,7 @@ namespace Blaster.Scene
             entityFactory.CreateText(new Vector2(200, 340), "Press enter to start game...");
         }
 
-        internal override void DrawScene()
+        internal override void DrawScene(GameTime gameTime)
         {
             var keyboardState = KeyboardExtended.GetState();
 
@@ -38,6 +38,10 @@ namespace Blaster.Scene
                 world.Dispose();
                 _sceneHandler.ChangeScene(new GameScene());
             }
+        }
+
+        internal override void UpdateScene(GameTime gameTime)
+        {
         }
     }
 }
