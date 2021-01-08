@@ -1,18 +1,11 @@
 ﻿using Blaster.Components;
-using Blaster.Network;
-using Blaster.Scene;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Entities.Systems;
 using MonoGame.Extended.Gui.Controls;
 using MonoGame.Extended.Sprites;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static Blaster.Network.NetworkHelper;
 
 namespace Blaster.Systems
 {
@@ -66,7 +59,10 @@ namespace Blaster.Systems
                 else
                 {
                     var text = _textMapper.Get(entity);
-                    _spriteBatch.DrawString(text.font, text.text, _transforMapper.Get(entity).Position, Color.White);
+                    if (text.Destroy)
+                        DestroyEntity(entity);
+                    else
+                        _spriteBatch.DrawString(text.font, text.text, _transforMapper.Get(entity).Position, Color.White);
                 }
 
             }

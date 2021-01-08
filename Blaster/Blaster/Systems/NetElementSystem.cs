@@ -49,7 +49,7 @@ namespace Blaster.Systems
             if (enumerable.Any())
             {
                 var t = _transformMapper.Get(entityId);
-                _entityFactory.CreateText(new Vector2(t.Position.X, t.Position.Y + 10), enumerable.First().body);
+                _entityFactory.CreateText(new Vector2(t.Position.X, t.Position.Y + 10), enumerable.First().body, 3);
             }
         }
 

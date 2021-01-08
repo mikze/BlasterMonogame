@@ -45,13 +45,13 @@ namespace Blaster
 
         }
 
-        public Entity CreateText(Vector2 position, string text)
+        public Entity CreateText(Vector2 position, string text, int seconds)
         {
             var font = _contentManager.Load<SpriteFont>("Score");
             var entity = _world.CreateEntity();
 
             entity.Attach(new Transform2(position, 0, Vector2.One * 4));
-            entity.Attach(new Text(text,font));
+            entity.Attach(new Text(text,font, seconds));
             return entity;
 
         }

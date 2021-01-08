@@ -1,14 +1,10 @@
 ﻿using Blaster.Systems;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Entities;
 using MonoGame.Extended.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Blaster.Scene
 {
@@ -26,7 +22,7 @@ namespace Blaster.Scene
 
             var entityFactory = new EntityFactory(world, _sceneHandler._content);
 
-            entityFactory.CreateText(new Vector2(200, 340), "Press enter to start game...");
+            entityFactory.CreateText(new Vector2(200, 340), "Press enter to start game...", 0);
         }
 
         internal override void DrawScene(GameTime gameTime)
