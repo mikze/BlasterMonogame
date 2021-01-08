@@ -35,27 +35,34 @@ namespace Blaster.Scene
 
         public override void LoadContent()
         {
-            var camera = new OrthographicCamera(_sceneHandler._graphicsDevice);
-
-            entityFactory = new EntityFactory();
-
-            world = new WorldBuilder()
-                .AddSystem(new RenderSystem(new SpriteBatch(_sceneHandler._graphicsDevice), camera))
-                .AddSystem(new NetElementSystem(entityFactory))
-                .Build();
-
-            _sceneHandler._gameComponents.Add(world);
-
-            entityFactory.SetWorldAndContentManager(world, _sceneHandler._content);
-
-            var entitiesToBuild = DownloadElementsFromServer();
-
-            foreach (var e in entitiesToBuild)
+            try
             {
-                entityFactory.CreatePlayer(e.Position, e.Id);
-            }
+                var camera = new OrthographicCamera(_sceneHandler._graphicsDevice);
 
-            LoadGui();
+                entityFactory = new EntityFactory();
+
+                world = new WorldBuilder()
+                    .AddSystem(new RenderSystem(new SpriteBatch(_sceneHandler._graphicsDevice), camera))
+                    .AddSystem(new NetElementSystem(entityFactory))
+                    .Build();
+
+                _sceneHandler._gameComponents.Add(world);
+
+                entityFactory.SetWorldAndContentManager(world, _sceneHandler._content);
+
+                var entitiesToBuild = DownloadElementsFromServer();
+
+                foreach (var e in entitiesToBuild)
+                {
+                    entityFactory.CreatePlayer(e.Position, e.Id);
+                }
+
+                LoadGui();
+            }
+            catch
+            {
+                _sceneHandler.ChangeScene(new ErrorScene());
+            }
         }
 
         internal override void DrawScene(GameTime gameTime)

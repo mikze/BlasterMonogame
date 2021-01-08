@@ -12,10 +12,15 @@ namespace Blaster.Network
         public static NetElement[] DownloadElementsFromServer()
         {
             BlasterClient.Send(new Frame() { body = "GetEntities" });
-            Thread.Sleep(200);
+            Thread.Sleep(400);
             var Read = BlasterClient.GetFrames().Where(x => ((FrameKind)x.FrameKind) == FrameKind.entity);
-            var netElements = splitNetElementsFromFrameBody(Read.First().body);
-            return netElements;
+            if (Read.First().body != string.Empty)
+            {
+                var netElements = splitNetElementsFromFrameBody(Read.First().body);
+                return netElements;
+            }
+            else
+                throw new Exception("Cannot connect to server.");
         }
 
         public enum FrameKind
@@ -23,6 +28,7 @@ namespace Blaster.Network
             entity,
             movement,
             newPLayer,
+            playerDisconnected,
             chat
         }
 

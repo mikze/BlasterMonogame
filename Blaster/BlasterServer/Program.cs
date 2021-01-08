@@ -23,25 +23,27 @@ namespace BlasterServer
             {
                 var client = (Client)c;
                 var e = new Entity(client.Id, new System.Numerics.Vector2(100, 100), "Player");
+                
                 entities.Add(e);
                 BradCastNewPlayerToOthers(e);
             };
 
             host.RecieveHandler = (t, o) =>
             {
-                if ((FrameKind)t.FrameKind == FrameKind.entity)
-                    HandleSendEntities(o);
+                    if ((FrameKind)t.FrameKind == FrameKind.entity)
+                        HandleSendEntities(o);
 
-                if ((FrameKind)t.FrameKind == FrameKind.movement)
-                    HandleMovement(o, t);
+                    if ((FrameKind)t.FrameKind == FrameKind.movement)
+                        HandleMovement(o, t);
 
-                if ((FrameKind)t.FrameKind == FrameKind.chat)
-                    HandleChat(o, t);
+                    if ((FrameKind)t.FrameKind == FrameKind.chat)
+                        HandleChat(o, t);
             };
 
             host.OnClientDisconnected += c =>
             {
                 entities.Remove(entities.First(x => x.Id == c.Id));
+                host.BroadCast(new Frame() { id = c.Id, FrameKind = (int)FrameKind.playerDisconnected, body = string.Empty });
             };
 
             new TaskFactory().StartNew(
@@ -114,6 +116,7 @@ namespace BlasterServer
             entity,
             movement,
             newPLayer,
+            playerDisconnected,
             chat
         }
 

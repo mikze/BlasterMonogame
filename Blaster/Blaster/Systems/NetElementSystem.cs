@@ -41,7 +41,17 @@ namespace Blaster.Systems
             var frames = BlasterClient.GetFrames(p.Id);
             HandleMovements(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.movement), entityId);
             HandleNewPlayer(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.newPLayer));
+            HandlePlayerDisconnected(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.playerDisconnected), p.Id, entityId);
             HandleChat(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.chat), entityId);
+        }
+
+        private void HandlePlayerDisconnected(IEnumerable<Frame> frames, int playerId, int entityId)
+        {
+            foreach(var f in frames)
+            {
+                if(f.id == playerId)
+                    DestroyEntity(entityId);
+            }
         }
 
         private void HandleChat(IEnumerable<Frame> enumerable, int entityId)
@@ -49,7 +59,7 @@ namespace Blaster.Systems
             if (enumerable.Any())
             {
                 var t = _transformMapper.Get(entityId);
-                _entityFactory.CreateText(new Vector2(t.Position.X, t.Position.Y + 10), enumerable.First().body, 3);
+                _entityFactory.CreateText(new Vector2(t.Position.X, t.Position.Y - 50), enumerable.First().body, 3);
             }
         }
 
@@ -58,7 +68,7 @@ namespace Blaster.Systems
             foreach(var e in enumerable)
             {
                 var newElem = splitNetElementFromFrameBody(e.body);
-                _entityFactory.CreatePlayer(newElem.Position, newElem.Id);
+                _entityFactory.CreatePlayer(newElem.Position, e.id);
             }
         }
 
