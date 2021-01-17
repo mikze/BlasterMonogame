@@ -99,7 +99,7 @@ namespace BlasterServer
             foreach (var c in host.clients)
             {
                 if (c.Id != e.Id)
-                    host.Send(new Frame() { id = e.Id, FrameKind = (int)FrameKind.newPLayer, body = ParseEntityToBody(e) }, c.Id);
+                    host.Send(new Frame() { id = e.Id, FrameKind = (int)FrameKind.newPLayer, body = ParseEntityToBody(e) }, c.Id, true);
             }
         }
 

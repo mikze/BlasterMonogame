@@ -19,6 +19,6 @@ namespace SimpleConnection
 
         public virtual byte[] Listen(ref IPEndPoint endPoint) => listener.Listen(ref endPoint);
 
-        public virtual void Send(byte [] msg, IPEndPoint host) => listener.Send(msg, host);
+        public virtual void Send(byte [] msg, IPEndPoint host, bool forceResponse = false) => listener.Send(msg, host);
     }
 }
