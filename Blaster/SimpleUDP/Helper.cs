@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SimpleUDP
+namespace SimpleConnection
 {
     public static class Helper
     {

@@ -1,15 +1,16 @@
 ﻿using Newtonsoft.Json;
+using SimpleConnection.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace SimpleUDP.Client
+namespace SimpleConnection.Client
 {
-    public class Client<t> : Udp
+    public class Client<t> : ConnectionHandler
     {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-        public Client(int port) : base(port) {}
+        public Client(IConnectionHandler connHandler) : base(connHandler) {}
 
         public t Listen() =>
             JsonConvert.DeserializeObject<t>(

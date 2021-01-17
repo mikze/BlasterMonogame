@@ -1,4 +1,4 @@
-﻿namespace SimpleUDP
+﻿namespace SimpleConnection
 {
     internal struct Ramka
     {

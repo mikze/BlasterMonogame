@@ -1,4 +1,5 @@
-﻿using SimpleUDP.Client;
+﻿using SimpleConnection.Client;
+using SimpleConnection.Connection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Blaster.Network
 
         public static void Connect(IPEndPoint EndPoint)
         {
-            client = new Client<Frame>(0);
+            client = new Client<Frame>(new UDPConnection(0));
             client.Connect(EndPoint);
             endPoint = EndPoint;
             StartListening();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace SimpleUDP.Server
+namespace SimpleConnection.Server
 {
     public class Client : IClient
     {

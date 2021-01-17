@@ -1,10 +1,12 @@
 ﻿using BlasterServer.Entities;
-using SimpleUDP.Server;
+using SimpleConnection.Server;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using SimpleUDP;
+using SimpleConnection;
+using SimpleConnection.Connection;
+using SimpleUDP.Server;
 
 namespace BlasterServer
 {
@@ -17,7 +19,7 @@ namespace BlasterServer
 
         static void Main(string[] args)
         {
-            host = new Host<Frame>(6666);
+            host = new Host<Frame>(new UDPConnection(6666));
 
             host.OnClientAdded += c =>
             {

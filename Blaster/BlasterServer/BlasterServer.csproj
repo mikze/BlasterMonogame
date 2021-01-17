@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleUDP\SimpleUDP.csproj" />
+    <ProjectReference Include="..\SimpleUDP\SimpleConnection.csproj" />
   </ItemGroup>
 
 </Project>

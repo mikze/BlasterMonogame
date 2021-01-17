@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blaster", "Blaster\Blaster.csproj", "{F6DE5EB8-8D91-48A2-89DC-E2A3A379E6B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlasterServer", "BlasterServer\BlasterServer.csproj", "{6890CC0C-C180-4297-BC5F-2169B5154B57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlasterServer", "BlasterServer\BlasterServer.csproj", "{6890CC0C-C180-4297-BC5F-2169B5154B57}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleUDP", "SimpleUDP\SimpleUDP.csproj", "{B2DCD5A6-04BD-489A-9B15-4C30810921B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleConnection", "SimpleUDP\SimpleConnection.csproj", "{B2DCD5A6-04BD-489A-9B15-4C30810921B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

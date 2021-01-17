@@ -34,7 +34,7 @@ namespace Blaster.Scene
         public GameScene(string playerName) : base()
         {
             _playerName = playerName;
-            BlasterClient.Connect(new IPEndPoint(IPAddress.Parse("192.168.100.47"), 6666));
+            BlasterClient.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6666)); //54.37.139.37
         }
 
         public override void LoadContent()
@@ -56,6 +56,7 @@ namespace Blaster.Scene
                 entityFactory.SetWorldAndContentManager(world, _sceneHandler._content);
                 PlayerConnect(_playerName);
                 var entitiesToBuild = DownloadElementsFromServer();
+                
 
                 foreach (var e in entitiesToBuild)
                 {
@@ -66,6 +67,7 @@ namespace Blaster.Scene
             }
             catch(Exception e)
             {
+                BlasterClient.Disconnect();
                 _sceneHandler.ChangeScene(new ErrorScene());
             }
         }

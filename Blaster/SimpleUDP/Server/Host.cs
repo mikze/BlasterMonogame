@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using SimpleConnection;
+using SimpleConnection.Interfaces;
+using SimpleConnection.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +11,12 @@ using System.Text;
 
 namespace SimpleUDP.Server
 {
-    public class Host<t> : Udp
+    public class Host<t> : ConnectionHandler
     {
         public List<IClient> clients = new List<IClient>();
         UdpClient Sender;
         bool exit = false;
-        public Host(int port) : base(port)
+        public Host(IConnectionHandler connectionHandler) : base(connectionHandler)
         {
             Sender = new UdpClient();
         }
