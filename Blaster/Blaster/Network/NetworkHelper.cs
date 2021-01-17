@@ -11,8 +11,8 @@ namespace Blaster.Network
     {
         public static NetElement[] DownloadElementsFromServer()
         {
-            BlasterClient.Send(new Frame() { body = "GetEntities" });
-            Thread.Sleep(400);
+            BlasterClient.Send(new Frame() { FrameKind = (int)FrameKind.entity });
+            Thread.Sleep(200);
             var Read = BlasterClient.GetFrames().Where(x => ((FrameKind)x.FrameKind) == FrameKind.entity);
             if (Read.First().body != string.Empty)
             {
@@ -23,13 +23,20 @@ namespace Blaster.Network
                 throw new Exception("Cannot connect to server.");
         }
 
+        public static void PlayerConnect(string playerName)
+        {
+            BlasterClient.Send(new Frame() { FrameKind = (int)FrameKind.playerConnect, body = playerName });
+        }
         public enum FrameKind
         {
-            entity,
-            movement,
-            newPLayer,
-            playerDisconnected,
-            chat
+            entity = 1,
+            movement = 2,
+            newPLayer = 3,
+            playerDisconnected = 4,
+            chat = 5,
+            setName = 6,
+            playerConnect = 7,
+            setPlayerState = 8
         }
 
         public struct Frame

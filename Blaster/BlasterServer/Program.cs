@@ -21,29 +21,35 @@ namespace BlasterServer
 
             host.OnClientAdded += c =>
             {
-                var client = (Client)c;
-                var e = new Entity(client.Id, new System.Numerics.Vector2(100, 100), "Player");
                 
-                entities.Add(e);
-                BradCastNewPlayerToOthers(e);
             };
 
             host.RecieveHandler = (t, o) =>
             {
-                    if ((FrameKind)t.FrameKind == FrameKind.entity)
-                        HandleSendEntities(o);
+                if ((FrameKind)t.FrameKind == FrameKind.playerConnect)
+                    HandlePlayerConnect(o, t);
 
-                    if ((FrameKind)t.FrameKind == FrameKind.movement)
-                        HandleMovement(o, t);
+                if ((FrameKind)t.FrameKind == FrameKind.entity)
+                    HandleSendEntities(o);
 
-                    if ((FrameKind)t.FrameKind == FrameKind.chat)
-                        HandleChat(o, t);
+                if ((FrameKind)t.FrameKind == FrameKind.movement)
+                    HandleMovement(o, t);
+
+                if ((FrameKind)t.FrameKind == FrameKind.chat)
+                    HandleChat(o, t);
+
+                if ((FrameKind)t.FrameKind == FrameKind.setName)
+                    HandleSetName(o, t);
+
+                if ((FrameKind)t.FrameKind == FrameKind.setPlayerState)
+                    HandleSetPLayerState(o, t);
             };
 
             host.OnClientDisconnected += c =>
             {
                 entities.Remove(entities.First(x => x.Id == c.Id));
                 host.BroadCast(new Frame() { id = c.Id, FrameKind = (int)FrameKind.playerDisconnected, body = string.Empty });
+                Console.WriteLine($"Disconnected {c.Id}");
             };
 
             new TaskFactory().StartNew(
@@ -59,18 +65,39 @@ namespace BlasterServer
             host.Listen();
 
         }
-
-        private static void HandleChat(int o, Frame t)
+        public enum State
         {
-            host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.chat, body = t.body });
+            Idle,
+            Walking
         }
+
+        private static void HandleSetPLayerState(int o, Frame t)
+        {    
+            host.BroadCast(new Frame() {id = o, FrameKind = (int)FrameKind.setPlayerState, body = t.body });
+        }
+
+        private static void HandlePlayerConnect(int o, Frame t)
+        {
+            Console.WriteLine($"Connected {o}");
+            var e = new Entity(o, new System.Numerics.Vector2(100, 100), t.body);
+            entities.Add(e);
+            BradCastNewPlayerToOthers(e);
+        }
+
+        private static void HandleSetName(int o, Frame t) 
+        {
+            var e = entities.First(x => x.Id == o);
+            e.Name = t.body;
+        }
+
+        private static void HandleChat(int o, Frame t) => host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.chat, body = t.body });
 
         private static void BradCastNewPlayerToOthers(Entity e)
         {
-            foreach(var c in host.clients)
+            foreach (var c in host.clients)
             {
-                if(c.Id != e.Id)
-                    host.Send(new Frame() { id = e.Id, FrameKind = 2, body = ParseEntityToBody(e) }, c.Id);
+                if (c.Id != e.Id)
+                    host.Send(new Frame() { id = e.Id, FrameKind = (int)FrameKind.newPLayer, body = ParseEntityToBody(e) }, c.Id);
             }
         }
 
@@ -81,7 +108,7 @@ namespace BlasterServer
             {
                 body += ParseEntityToBody(e) + "#";
             }
-            host.Send(new Frame() { id = id, FrameKind = 0, body = body }, id);
+            host.Send(new Frame() { id = id, FrameKind = (int)FrameKind.entity, body = body }, id);
         }
 
         private static void HandleMovement(int id, Frame frame)
@@ -104,7 +131,7 @@ namespace BlasterServer
                 e.Position = new System.Numerics.Vector2(e.Position.X, e.Position.Y + speed);
             }
 
-            host.BroadCast(new Frame() { id = id, FrameKind = 1, body = $"{e.Position.X}-{e.Position.Y}" });
+            host.BroadCast(new Frame() { id = id, FrameKind = (int)FrameKind.movement, body = $"{e.Position.X}-{e.Position.Y}" });
         }
         private static string ParseEntityToBody(Entity e)
         {
@@ -113,11 +140,14 @@ namespace BlasterServer
 
         public enum FrameKind
         {
-            entity,
-            movement,
-            newPLayer,
-            playerDisconnected,
-            chat
+            entity = 1,
+            movement = 2,
+            newPLayer = 3,
+            playerDisconnected = 4,
+            chat= 5,
+            setName =6 ,
+            playerConnect = 7,
+            setPlayerState = 8
         }
 
         public struct Frame
@@ -129,14 +159,14 @@ namespace BlasterServer
 
         static void handleCommand(string command)
         {
-            if(command == "exit")
+            if (command == "exit")
             {
                 exit = true;
                 host.Exit();
             }
-            if(command == "ShowClients")
+            if (command == "ShowClients")
             {
-                foreach(var c in host.clients)
+                foreach (var c in host.clients)
                 {
                     Console.WriteLine(c.Id);
                 }

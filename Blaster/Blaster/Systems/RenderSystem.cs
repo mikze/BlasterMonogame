@@ -1,5 +1,6 @@
 ﻿using Blaster.Components;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Entities;
@@ -17,13 +18,14 @@ namespace Blaster.Systems
         private ComponentMapper<Sprite> _spriteMapper;
         private ComponentMapper<Transform2> _transforMapper;
         private ComponentMapper<Text> _textMapper;
-        private ComponentMapper<TextBox> _textBoxMapper;
-
-        public RenderSystem(SpriteBatch spriteBatch, OrthographicCamera camera) 
-            : base(Aspect.All(typeof(Transform2)).One(typeof(AnimatedSprite), typeof(Sprite), typeof(Text)))
+        private ComponentMapper<Name> _nameMapper;
+        private ContentManager _contentManager;
+        public RenderSystem(SpriteBatch spriteBatch, OrthographicCamera camera, ContentManager contentManager) 
+            : base(Aspect.All(typeof(Transform2)).One(typeof(AnimatedSprite), typeof(Sprite), typeof(Text), typeof(NetElement)))
         {
             _spriteBatch = spriteBatch;
             _camera = camera;
+            _contentManager = contentManager;
         }
 
         public override void Draw(GameTime gameTime)
@@ -33,27 +35,26 @@ namespace Blaster.Systems
             foreach (var entity in ActiveEntities)
             {
                 bool isText = _textMapper.Has(entity);
+                
 
                 if (!isText)
                 {
-                    bool isTextBox = _textBoxMapper.Has(entity);
+                    bool hasName = _nameMapper.Has(entity);
+                    var sprite = _animatedSpriteMapper.Has(entity)
+                        ? _animatedSpriteMapper.Get(entity)
+                        : _spriteMapper.Get(entity);
+                    var transform = _transforMapper.Get(entity);
 
-                    if (!isTextBox)
+                    if (sprite is AnimatedSprite animatedSprite)
+                        animatedSprite.Update(gameTime.GetElapsedSeconds());
+
+                    _spriteBatch.Draw(sprite, transform);
+                    if (hasName)
                     {
-                        var sprite = _animatedSpriteMapper.Has(entity)
-                            ? _animatedSpriteMapper.Get(entity)
-                            : _spriteMapper.Get(entity);
-                        var transform = _transforMapper.Get(entity);
-
-                        if (sprite is AnimatedSprite animatedSprite)
-                            animatedSprite.Update(gameTime.GetElapsedSeconds());
-
-                        _spriteBatch.Draw(sprite, transform);
-                    }
-                    else
-                    {
-                        var textBox = _textBoxMapper.Get(entity);
-                        //textBox.Draw()
+                        var name = _nameMapper.Get(entity);
+                        var font = _contentManager.Load<SpriteFont>("Score");
+                        var position = new Vector2(_transforMapper.Get(entity).Position.X-15, _transforMapper.Get(entity).Position.Y - 50);
+                        _spriteBatch.DrawString(font, name.name, position, Color.White);
                     }
                 }
                 else
@@ -76,7 +77,7 @@ namespace Blaster.Systems
             _animatedSpriteMapper = mapperService.GetMapper<AnimatedSprite>();
             _spriteMapper = mapperService.GetMapper<Sprite>();
             _textMapper = mapperService.GetMapper<Text>();
-            _textBoxMapper = mapperService.GetMapper<TextBox>();
+            _nameMapper = mapperService.GetMapper<Name>();
         }
     }
 }

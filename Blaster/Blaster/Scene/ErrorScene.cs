@@ -18,7 +18,7 @@ namespace Blaster.Scene
         {
             var camera = new OrthographicCamera(_sceneHandler._graphicsDevice);
             world = new WorldBuilder()
-                .AddSystem(new RenderSystem(new SpriteBatch(_sceneHandler._graphicsDevice), camera))
+                .AddSystem(new RenderSystem(new SpriteBatch(_sceneHandler._graphicsDevice), camera, _sceneHandler._content))
                 .Build();
 
             _sceneHandler._gameComponents.Add(world);

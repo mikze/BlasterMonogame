@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static Blaster.Network.NetworkHelper;
 
@@ -15,21 +16,26 @@ namespace Blaster.Network
         static IPEndPoint endPoint;
         static List<Frame> frames = new List<Frame>();
         static bool listening = true;
+        static CancellationTokenSource tokenSource2;
+        static CancellationToken ct;
 
         public static void Connect(IPEndPoint EndPoint)
         {
             client = new Client<Frame>(0);
-            client.Connect(EndPoint);            
+            client.Connect(EndPoint);
             endPoint = EndPoint;
             StartListening();
         }
 
         static void Listen()
         {
+            tokenSource2 = new CancellationTokenSource();
+            ct = tokenSource2.Token;
+
             new TaskFactory().StartNew(
                 () =>
                     {
-                        while(listening)
+                        while (listening)
                         {
                             var f = client.Listen();
                             lock (frames)
@@ -38,15 +44,15 @@ namespace Blaster.Network
                             }
                         }
                     }
-                );
+                , tokenSource2.Token);
         }
 
-        private static void StopListening() => listening = false;
+        private static void StopListening() { tokenSource2.Cancel(); listening = false; }
 
         public static void Disconnect()
         {
-            client.Disconnect(endPoint);
             StopListening();
+            client.Disconnect(endPoint);          
         }
 
         public static void StartListening()
@@ -71,7 +77,7 @@ namespace Blaster.Network
         {
             lock (frames)
             {
-                var toReturn = frames.Where(x => x.id == id || (FrameKind)x.FrameKind == FrameKind.newPLayer ).ToArray();
+                var toReturn = frames.Where(x => x.id == id || (FrameKind)x.FrameKind == FrameKind.newPLayer).ToArray();
                 foreach (var f in toReturn)
                     frames.Remove(f);
 

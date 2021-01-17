@@ -19,7 +19,7 @@ namespace SimpleUDP.Server
 
         public void ClientRemove()
         {      
-            _id--;
+            //_id--;
         }
     }
 }

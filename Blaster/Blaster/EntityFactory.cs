@@ -28,7 +28,7 @@ namespace Blaster
 
         public void SetWorldAndContentManager(World w, ContentManager c) {_world = w; _contentManager = c;}
 
-        public Entity CreatePlayer(Vector2 position, int netId)
+        public Entity CreatePlayer(Vector2 position, int netId, string name)
         {
             var dudeTexture = _contentManager.Load<Texture2D>("hero");
             var dudeAtlas = TextureAtlas.Create("dudeAtlas", dudeTexture, 16, 16);
@@ -41,8 +41,21 @@ namespace Blaster
             entity.Attach(new Transform2(position, 0, Vector2.One * 4));
             entity.Attach(new Player());
             entity.Attach(new NetElement() { Id = netId });
+            entity.Attach(new Name { name = name });
             return entity;
 
+        }
+
+        public Entity CreateWall(Vector2 position)
+        {
+            var wallTexture = _contentManager.Load<Texture2D>("wall");
+            var wallSprite = new Sprite(wallTexture);
+            var entity = _world.CreateEntity();
+
+            entity.Attach(wallSprite);
+            entity.Attach(new Transform2(position, 0, Vector2.One * 4));
+
+            return entity;
         }
 
         public Entity CreateText(Vector2 position, string text, int seconds)
