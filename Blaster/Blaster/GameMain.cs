@@ -21,7 +21,7 @@ namespace Blaster
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.DarkSalmon);
             sceneHandler.DrawScene(gameTime);
             base.Draw(gameTime);           
         }

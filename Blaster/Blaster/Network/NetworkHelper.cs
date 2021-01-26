@@ -11,8 +11,9 @@ namespace Blaster.Network
     {
         public static NetElement[] DownloadElementsFromServer()
         {
+            Thread.Sleep(300);
             BlasterClient.Send(new Frame() { FrameKind = (int)FrameKind.entity });
-            Thread.Sleep(200);
+            Thread.Sleep(300);
             var Read = BlasterClient.GetFrames().Where(x => ((FrameKind)x.FrameKind) == FrameKind.entity);
             if (Read.First().body != string.Empty)
             {
@@ -63,8 +64,8 @@ namespace Blaster.Network
             var elem = new NetElement()
             {
                 Id = int.Parse(splittedBody[0]),
-                ComponentType = splittedBody[1],
-                Name = splittedBody[2],
+                Name = splittedBody[1],
+                ComponentType = splittedBody[2],
                 Position = new Microsoft.Xna.Framework.Vector2(float.Parse(splittedBody[3]), float.Parse(splittedBody[4]))
             };
 

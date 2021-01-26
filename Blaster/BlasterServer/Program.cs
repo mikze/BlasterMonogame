@@ -7,6 +7,7 @@ using System.Linq;
 using SimpleConnection;
 using SimpleConnection.Connection;
 using SimpleUDP.Server;
+using BlasterServer.Entities.Interfaces;
 
 namespace BlasterServer
 {
@@ -19,6 +20,26 @@ namespace BlasterServer
 
         static void Main(string[] args)
         {
+            for (int i = 0; i < 7; i++)
+            {
+                entities.Add(EnityFactory.CreateWall(0, i*55));
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                entities.Add(EnityFactory.CreateWall(i*53,0));
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                entities.Add(EnityFactory.CreateWall(10 * 53, i * 55));
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                entities.Add(EnityFactory.CreateWall(i * 53, 7 * 55));
+            }
+
             host = new Host<Frame>(new UDPConnection(6666));
 
             host.OnClientAdded += c =>
@@ -81,7 +102,8 @@ namespace BlasterServer
         private static void HandlePlayerConnect(int o, Frame t)
         {
             Console.WriteLine($"Connected {o}");
-            var e = new Entity(o, new System.Numerics.Vector2(100, 100), t.body);
+            var e = EnityFactory.CreatePlayer(o);
+            e.Name = t.body;
             entities.Add(e);
             BradCastNewPlayerToOthers(e);
         }
@@ -116,6 +138,7 @@ namespace BlasterServer
         private static void HandleMovement(int id, Frame frame)
         {
             var e = entities.First(x => x.Id == id);
+            var oldPosition = e.Position;
             if (frame.body == "right")
             {
                 e.Position = new System.Numerics.Vector2(e.Position.X + speed, e.Position.Y);
@@ -132,12 +155,32 @@ namespace BlasterServer
             {
                 e.Position = new System.Numerics.Vector2(e.Position.X, e.Position.Y + speed);
             }
+            
+            foreach(var _e in entities)
+            {
+                if (_e is IWallEntity && e.Id != _e.Id && _e.Hitbox.IsCollision(e.Hitbox))
+                {
+                    e.Position = oldPosition;
+                }
+            }
 
             host.BroadCast(new Frame() { id = id, FrameKind = (int)FrameKind.movement, body = $"{e.Position.X}-{e.Position.Y}" });
         }
+
         private static string ParseEntityToBody(Entity e)
         {
-            return $"{e.Id}-{e.Name}-{e.ComponentType}-{e.Position.X}-{e.Position.Y}";
+            Console.WriteLine($"Entity {e.Name}  {SniffType(e)}");
+            return $"{e.Id}-{e.Name}-{SniffType(e)}-{e.Position.X}-{e.Position.Y}";
+        }
+
+        private static string SniffType(Entity e)
+        {
+            if (e is IPlayerEntity)
+                return "player";
+            if (e is IWallEntity)
+                return "wall";
+
+            return "";
         }
 
         public enum FrameKind
@@ -146,8 +189,8 @@ namespace BlasterServer
             movement = 2,
             newPLayer = 3,
             playerDisconnected = 4,
-            chat= 5,
-            setName =6 ,
+            chat = 5,
+            setName = 6 ,
             playerConnect = 7,
             setPlayerState = 8
         }

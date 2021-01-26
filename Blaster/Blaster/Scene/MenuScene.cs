@@ -50,7 +50,7 @@ namespace Blaster.Scene
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font);
             var JoinButton = new Button { Content = "Join to server" };
-            var IPTextBox = new TextBox { Text = "127.0.0.1", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom };
+            var IPTextBox = new TextBox { Text = "54.37.139.37", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom };
             NameTextBox = new TextBox { Text = "Name", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom };
             JoinButton.PressedStateChanged += ChatText_PressedStateChanged;
             var controlTest = new StackPanel

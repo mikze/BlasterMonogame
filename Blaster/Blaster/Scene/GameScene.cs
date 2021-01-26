@@ -34,7 +34,7 @@ namespace Blaster.Scene
         public GameScene(string playerName) : base()
         {
             _playerName = playerName;
-            BlasterClient.Connect(new IPEndPoint(IPAddress.Parse("54.37.139.37"), 6666)); //54.37.139.37
+            BlasterClient.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6666)); //54.37.139.37
         }
 
         public override void LoadContent()
@@ -60,7 +60,10 @@ namespace Blaster.Scene
 
                 foreach (var e in entitiesToBuild)
                 {
-                    entityFactory.CreatePlayer(e.Position, e.Id, e.Name);
+                    if(e.ComponentType == "player")
+                        entityFactory.CreatePlayer(e.Position, e.Id, e.Name);
+                    if (e.ComponentType == "wall")
+                        entityFactory.CreateWall(e.Position);
                 }
 
                 LoadGui();
