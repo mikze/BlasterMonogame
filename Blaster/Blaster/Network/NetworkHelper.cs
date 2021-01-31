@@ -11,10 +11,13 @@ namespace Blaster.Network
     {
         public static NetElement[] DownloadElementsFromServer()
         {
-            Thread.Sleep(300);
             BlasterClient.Send(new Frame() { FrameKind = (int)FrameKind.entity });
-            Thread.Sleep(300);
             var Read = BlasterClient.GetFrames().Where(x => ((FrameKind)x.FrameKind) == FrameKind.entity);
+            while (!Read.Any())
+            {
+                Thread.Sleep(10);
+                Read = BlasterClient.GetFrames().Where(x => ((FrameKind)x.FrameKind) == FrameKind.entity);
+            }
             if (Read.First().body != string.Empty)
             {
                 var netElements = splitNetElementsFromFrameBody(Read.First().body);
@@ -37,10 +40,11 @@ namespace Blaster.Network
             chat = 5,
             setName = 6,
             playerConnect = 7,
-            setPlayerState = 8
+            setPlayerState = 8,
+            createBomb = 9
         }
 
-        public struct Frame
+        public class Frame
         {
             public int id;
             public int FrameKind;

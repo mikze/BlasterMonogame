@@ -1,6 +1,6 @@
 ﻿namespace SimpleConnection
 {
-    public struct Ramka
+    public class Ramka
     {
         public string msg;
         public string ackHash;

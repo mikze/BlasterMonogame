@@ -16,9 +16,10 @@ namespace SimpleUDP.Server
     {
         public List<IClient> clients = new List<IClient>();
         Dictionary<string,(t, IPEndPoint)> framesToResend = new Dictionary<string, (t, IPEndPoint)>();
-
+        static object locker = new object();
         UdpClient Sender;
         bool exit = false;
+        Task reSendTask;
         public Host(IConnectionHandler connectionHandler) : base(connectionHandler)
         {
             Sender = new UdpClient();
@@ -40,9 +41,12 @@ namespace SimpleUDP.Server
                     var client = clients.FirstOrDefault(x => x.EndPoint.Equals(endPoint));
                     if (client != null)
                     {
-                        var _msg = DeParseCommand(msg);
-
-                        RecieveHandler(_msg, client.Id);
+                        try
+                        {
+                            var _msg = DeParseCommand(msg);
+                            RecieveHandler(_msg, client.Id);
+                        }
+                        catch { }
                     }
                 }
             }
@@ -61,7 +65,7 @@ namespace SimpleUDP.Server
 
         private void RemoveFrameFromStack(string ackHash)
         {
-            lock (framesToResend)
+            lock (locker)
             {
                 framesToResend.Remove(ackHash);
             }
@@ -77,29 +81,31 @@ namespace SimpleUDP.Server
 
             return string.Empty;
         }
-        private void Send(t msg, IPEndPoint endPoint, bool forceResponse = false)
+        private void Send(t msg, IPEndPoint endPoint, bool forceResponse = false, string ackHash = "")
         {
-            var ackHash = string.Empty;
-
             if (forceResponse) {
                 ackHash = Helper.Generatehash();
-                lock (framesToResend)
+                lock (locker)
                 {
                     framesToResend.Add(ackHash, (msg, endPoint) );
                 }
-
-                new TaskFactory().StartNew(
+                if(reSendTask == null || reSendTask.Status == TaskStatus.RanToCompletion)
+                reSendTask =  new TaskFactory().StartNew(
                     () =>
                     {
-                        Task.Delay(1000);
-                        lock (framesToResend)
+                        Task.Delay(10);
+                        while (framesToResend.Any())
                         {
-                            if (framesToResend.Any())
+                            lock (locker)
                             {
-                                foreach (var toSend in framesToResend)
+                                try
                                 {
-                                    Send(toSend.Value.Item1, toSend.Value.Item2, true);
+                                    foreach (var toSend in framesToResend.ToArray())
+                                    {
+                                        Send(toSend.Value.Item1, toSend.Value.Item2, false, toSend.Key);
+                                    }
                                 }
+                                catch { }
                             }
                         }
                     }
@@ -112,21 +118,22 @@ namespace SimpleUDP.Server
         public void Send(t msg, int clinetId, bool forceResponse = false)
         {
             var clientEndPoint = clients.First(x => x.Id == clinetId).EndPoint;
-            Send(msg, clientEndPoint);
+            Send(msg, clientEndPoint, forceResponse);
         }
         public void BroadCast(t msg, bool forceResponse = false) => clients.ForEach( cl => Send(msg, cl.EndPoint, forceResponse));
         private bool IsNewClient(byte[] msg, IPEndPoint endPoint)
         {
             try
             {
-                var sMsg = JsonConvert.DeserializeObject<Ramka>(JsonConvert.DeserializeObject<Ramka>(Helper.ByteArrayToStringMsg(msg)).msg);
+                var strFromByte = Helper.ByteArrayToStringMsg(msg);
+                var frame = JsonConvert.DeserializeObject<Ramka>(strFromByte);
+                var sMsg = JsonConvert.DeserializeObject<Ramka>(frame.msg);
 
                 if (sMsg.msg == "Welcome")
                 {
                     var newClient = new Client(endPoint);
                     clients.Add(newClient);
                     OnClientAdded(newClient);
-                    Console.WriteLine("New client!");
 
                     return true;
                 }
@@ -137,7 +144,6 @@ namespace SimpleUDP.Server
                     if (c != null)
                     {
                         DisconnectClient(c);
-                        Console.WriteLine("Client disconnected!");
                     }
                 }
 

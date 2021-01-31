@@ -66,13 +66,15 @@ namespace BlasterServer
 
                 if ((FrameKind)t.FrameKind == FrameKind.setPlayerState)
                     HandleSetPLayerState(o, t);
+
+                if ((FrameKind)t.FrameKind == FrameKind.createBomb)
+                    HandleCreateBomb(o, t);
             };
 
             host.OnClientDisconnected += c =>
             {
                 entities.Remove(entities.First(x => x.Id == c.Id));
                 host.BroadCast(new Frame() { id = c.Id, FrameKind = (int)FrameKind.playerDisconnected, body = string.Empty });
-                Console.WriteLine($"Disconnected {c.Id}");
             };
 
             new TaskFactory().StartNew(
@@ -88,6 +90,12 @@ namespace BlasterServer
             host.Listen();
 
         }
+
+        private static void HandleCreateBomb(int o, Frame t)
+        {
+            
+        }
+
         public enum State
         {
             Idle,
@@ -101,7 +109,6 @@ namespace BlasterServer
 
         private static void HandlePlayerConnect(int o, Frame t)
         {
-            Console.WriteLine($"Connected {o}");
             var e = EnityFactory.CreatePlayer(o);
             e.Name = t.body;
             entities.Add(e);
@@ -169,7 +176,6 @@ namespace BlasterServer
 
         private static string ParseEntityToBody(Entity e)
         {
-            Console.WriteLine($"Entity {e.Name}  {SniffType(e)}");
             return $"{e.Id}-{e.Name}-{SniffType(e)}-{e.Position.X}-{e.Position.Y}";
         }
 
@@ -192,7 +198,8 @@ namespace BlasterServer
             chat = 5,
             setName = 6 ,
             playerConnect = 7,
-            setPlayerState = 8
+            setPlayerState = 8,
+            createBomb = 9
         }
 
         public struct Frame

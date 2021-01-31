@@ -38,11 +38,12 @@ namespace Blaster.Network
                     {
                         while (listening)
                         {
-                            var f = client.Listen();
-                            lock (frames)
-                            {
-                                frames.Add(f);
-                            }
+                            var f = client.Listen() as Frame;
+                            if (f != null)
+                                lock (frames)
+                                {
+                                    frames.Add(f);
+                                }
                         }
                     }
                 , tokenSource2.Token);
