@@ -44,7 +44,7 @@ namespace BlasterServer
 
             host.OnClientAdded += c =>
             {
-                
+                Console.WriteLine($"Client connected: {c.EndPoint}");
             };
 
             host.RecieveHandler = (t, o) =>
@@ -75,6 +75,8 @@ namespace BlasterServer
             {
                 entities.Remove(entities.First(x => x.Id == c.Id));
                 host.BroadCast(new Frame() { id = c.Id, FrameKind = (int)FrameKind.playerDisconnected, body = string.Empty });
+
+                Console.WriteLine($"Client disconnected: {c.EndPoint}");
             };
 
             new TaskFactory().StartNew(
@@ -121,7 +123,10 @@ namespace BlasterServer
             e.Name = t.body;
         }
 
-        private static void HandleChat(int o, Frame t) => host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.chat, body = t.body });
+        private static void HandleChat(int o, Frame t) { 
+            host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.chat, body = t.body });
+            Console.WriteLine($"{t.id} wrote: {t.body}");
+        }
 
         private static void BradCastNewPlayerToOthers(Entity e)
         {
