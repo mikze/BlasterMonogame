@@ -46,6 +46,13 @@ namespace Blaster.Systems
             HandlePlayerDisconnected(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.playerDisconnected), p.Id, entityId);
             HandleChat(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.chat), entityId);
             HandlePlayerNameChange(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.setName), p);
+            HandleBomb(frames.Where(x => (FrameKind)x.FrameKind == FrameKind.createBomb));
+        }
+
+        private void HandleBomb(IEnumerable<Frame> enumerable)
+        {
+            var position = enumerable.First().body.Split('-');
+            _entityFactory.CreateBomb(new Vector2(float.Parse(position[0]), float.Parse(position[1])));
         }
 
         private void HandlePlayerState(IEnumerable<Frame> enumerable, int entityId)

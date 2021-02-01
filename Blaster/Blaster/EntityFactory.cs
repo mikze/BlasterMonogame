@@ -58,6 +58,18 @@ namespace Blaster
             return entity;
         }
 
+        public Entity CreateBomb(Vector2 position)
+        {
+            var wallTexture = _contentManager.Load<Texture2D>("wall");
+            var wallSprite = new Sprite(wallTexture);
+            var entity = _world.CreateEntity();
+
+            entity.Attach(wallSprite);
+            entity.Attach(new Transform2(position, 0, Vector2.One * 4));
+
+            return entity;
+        }
+
         public Entity CreateText(Vector2 position, string text, int seconds)
         {
             var font = _contentManager.Load<SpriteFont>("Score");

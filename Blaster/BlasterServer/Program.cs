@@ -95,7 +95,7 @@ namespace BlasterServer
 
         private static void HandleCreateBomb(int o, Frame t)
         {
-            
+            host.BroadCast(new Frame() { id = o, FrameKind = (int)FrameKind.createBomb, body = $"{entities.Where(x => x.Id == o).First().Position.X-entities.Where(x => x.Id == o).First().Position.Y}" });
         }
 
         public enum State
