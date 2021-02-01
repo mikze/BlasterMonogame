@@ -123,12 +123,20 @@ namespace Blaster.Scene
                 BlasterClient.Send(new Frame() { id = 1, FrameKind = (int)FrameKind.movement, body = "down" });
             }
 
+            if (keyState.IsKeyDown(Keys.Space))
+            {
+                broadcastState = true;
+                BlasterClient.Send(new Frame() { id = 1, FrameKind = (int)FrameKind.createBomb, body = "" });
+            }
+
             if (broadcastState && !keyState.IsKeyDown(Keys.Right) && !keyState.IsKeyDown(Keys.Left) && !keyState.IsKeyDown(Keys.Up) && !keyState.IsKeyDown(Keys.Down))
             {
                 broadcastState = false;
 
                 BlasterClient.Send(new Frame() { id = 1, FrameKind = (int)FrameKind.setPlayerState, body = "idle" });
             }
+
+
         }
 
         void LoadGui()

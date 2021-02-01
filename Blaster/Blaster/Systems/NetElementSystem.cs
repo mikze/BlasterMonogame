@@ -51,8 +51,12 @@ namespace Blaster.Systems
 
         private void HandleBomb(IEnumerable<Frame> enumerable)
         {
-            var position = enumerable.First().body.Split('-');
-            _entityFactory.CreateBomb(new Vector2(float.Parse(position[0]), float.Parse(position[1])));
+            var msg = enumerable.FirstOrDefault();
+            if (msg != null)
+            {
+                var position = msg.body.Split('-');
+                _entityFactory.CreateBomb(new Vector2(float.Parse(position[0]), float.Parse(position[1])));
+            }
         }
 
         private void HandlePlayerState(IEnumerable<Frame> enumerable, int entityId)
